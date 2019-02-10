@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import sber.controller.BankController;
+import sber.exceptions.NotEnoughMoneyException;
 import sber.service.MoneyTransferService;
 
 import java.math.BigDecimal;
@@ -43,8 +44,8 @@ public class RestApiTest {
     }
 
     @Test
-    public void test1() throws Exception {
-        this.mvc.perform(post("/api/takeMoney?id=1&value=1")).andExpect(status().isOk())
+    public void testWithdrawValid() throws Exception {
+        this.mvc.perform(post("/api/withdraw?id=1&value=1")).andExpect(status().isOk())
                 .andDo(mvcResult -> {
                     final String json = mvcResult.getResponse().getContentAsString();
                     final JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
@@ -54,8 +55,8 @@ public class RestApiTest {
     }
 
     @Test
-    public void test2() throws Exception {
-        this.mvc.perform(post("/api/putMoney?id=1&value=1")).andExpect(status().isOk())
+    public void testTopUpValid() throws Exception {
+        this.mvc.perform(post("/api/topUp?id=1&value=1")).andExpect(status().isOk())
                 .andDo(mvcResult -> {
                     final String json = mvcResult.getResponse().getContentAsString();
                     final JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
@@ -65,29 +66,30 @@ public class RestApiTest {
     }
 
     @Test
-    public void test3() throws Exception {
-        this.mvc.perform(post("/api/takeMoney?value=1")).andExpect(status().is(400));
+    public void testWithdrawNotEnoughParameters() throws Exception {
+        this.mvc.perform(post("/api/withdraw?value=1")).andExpect(status().is(400));
     }
 
     @Test
-    public void test4() throws Exception {
-        this.mvc.perform(post("/api/putMoney?id=1")).andExpect(status().is(400));
+    public void testTopUpNotEnoughParameters() throws Exception {
+        this.mvc.perform(post("/api/topUp?id=1")).andExpect(status().is(400));
     }
 
     @Test
-    public void test5() throws Exception {
-        doThrow(IllegalStateException.class).when(moneyTransferService).takeMoney(any(Long.class), any(BigDecimal.class));
-        this.mvc.perform(post("/api/takeMoney?id=1&value=1")).andExpect(status().is(400))
+    public void testWithdrawNotEnoughMoney() throws Exception {
+        doThrow(NotEnoughMoneyException.class).when(moneyTransferService).withdraw(any(Long.class), any(BigDecimal.class));
+        this.mvc.perform(post("/api/withdraw?id=1&value=1")).andExpect(status().is(400))
                 .andDo(mvcResult -> {
                     final String json = mvcResult.getResponse().getContentAsString();
                     final JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
                     Assert.assertEquals("error", jsonObject.get("status").getAsString());
+                    Assert.assertEquals("Not enough money.", jsonObject.get("description").getAsString());
                 });
     }
     @Test
-    public void test6() throws Exception {
-        doThrow(IllegalStateException.class).when(moneyTransferService).putMoney(any(Long.class), any(BigDecimal.class));
-        this.mvc.perform(post("/api/putMoney?id=1&value=1")).andExpect(status().is(400))
+    public void testTopUpError() throws Exception {
+        doThrow(IllegalStateException.class).when(moneyTransferService).topUp(any(Long.class), any(BigDecimal.class));
+        this.mvc.perform(post("/api/topUp?id=1&value=1")).andExpect(status().is(400))
                 .andDo(mvcResult -> {
                     final String json = mvcResult.getResponse().getContentAsString();
                     final JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();

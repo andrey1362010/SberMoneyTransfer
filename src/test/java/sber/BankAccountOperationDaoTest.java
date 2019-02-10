@@ -31,7 +31,7 @@ public class BankAccountOperationDaoTest {
     }
 
     @Test
-    public void testDao1() {
+    public void testLogError() {
         bankAccountOperationDao.logError(1, 1, new BigDecimal(100));
         final List<OperationRow> operationRows = jdbcTemplate.query("SELECT * FROM bank_account_operations", new OperationRowMapper());
         Assert.assertEquals(1, operationRows.size());
@@ -42,7 +42,7 @@ public class BankAccountOperationDaoTest {
     }
 
     @Test
-    public void testDao2() {
+    public void testLogSuccess() {
         bankAccountOperationDao.logSuccess(1, 1, new BigDecimal(100));
         final List<OperationRow> operationRows = jdbcTemplate.query("SELECT * FROM bank_account_operations", new OperationRowMapper());
         Assert.assertEquals(1, operationRows.size());

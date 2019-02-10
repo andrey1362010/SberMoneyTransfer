@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sber.dao.BankAccountDao;
 import sber.dao.BankAccountOperationDao;
+import sber.exceptions.NotEnoughMoneyException;
 import sber.service.MoneyTransferService;
 
 import java.math.BigDecimal;
@@ -30,9 +31,9 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
      * Если это критично, то можно сначала писать неуспешный лог, а потом вместе с транзакцией изменения счета апдейтить его на success
      */
     @Override
-    public void putMoney(long userId, BigDecimal value) {
+    public void topUp(long userId, BigDecimal value) {
         try {
-            bankAccountDao.putMoney(userId, value);
+            bankAccountDao.topUp(userId, value);
             bankAccountOperationDao.logSuccess(userId, BankAccountOperationDao.OPERATION_TYPE_PUT, value);
         } catch (Exception e) {
             logger.error("Error put money.", e);
@@ -42,12 +43,12 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     }
 
     /**
-     * Аналогично putMoney
+     * Аналогично topUp
      */
     @Override
-    public void takeMoney(long userId, BigDecimal value) {
+    public void withdraw(long userId, BigDecimal value) throws NotEnoughMoneyException {
         try {
-            bankAccountDao.takeMoney(userId, value);
+            bankAccountDao.withdraw(userId, value);
             bankAccountOperationDao.logSuccess(userId, BankAccountOperationDao.OPERATION_TYPE_TAKE, value);
         } catch (Exception e) {
             logger.error("Error take money.", e);

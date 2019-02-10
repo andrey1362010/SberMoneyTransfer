@@ -33,10 +33,10 @@ public class MultiThreadConsistencyTest {
 
     /**
      * Многопоточный тест на консистентность БД.
-     * Используем HSQL базу, так как Н2 не поддерживает уровени изолированности REPEATABLE_READ
+     * Используем HSQL базу, так как Н2 не поддерживает уровень изолированности REPEATABLE_READ
      */
     @Test
-    public void test1() {
+    public void testMultiThreadConsistency() {
 
         final int threadCount = 4;
         final int operationsCount = 100;
@@ -51,7 +51,7 @@ public class MultiThreadConsistencyTest {
             final Future future = executorService.submit(() -> {
                 try {
                     final BigDecimal insertValue = new BigDecimal(100.);
-                    moneyTransferService.putMoney(1, insertValue);
+                    moneyTransferService.topUp(1, insertValue);
                     total.accumulateAndGet(insertValue, (a, b) -> a.add(b));
                     totalSuccess.incrementAndGet();
                 } catch (Throwable e) {

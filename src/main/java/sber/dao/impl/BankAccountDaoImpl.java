@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import sber.dao.BankAccountDao;
+import sber.exceptions.NotEnoughMoneyException;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -28,22 +29,22 @@ public class BankAccountDaoImpl implements BankAccountDao {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
-    public void putMoney(long userId, BigDecimal value) {
+    public void topUp(long userId, BigDecimal value) {
         if(value.compareTo(new BigDecimal(0.)) < 0) throw new IllegalArgumentException("Отрицательная сумма.");
         final BigDecimal oldValue = jdbcTemplate.queryForObject(SELECT_QUERY, new Object[]{userId}, BigDecimal.class);
         jdbcTemplate.update(UPDATE_QUERY, oldValue.add(value), userId);
     }
 
     /**
-     * Аналогично putMoney
+     * Аналогично topUp
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
-    public void takeMoney(long userId, BigDecimal value) {
+    public void withdraw(long userId, BigDecimal value) throws NotEnoughMoneyException {
         if(value.compareTo(new BigDecimal(0.)) < 0) throw new IllegalArgumentException("Отрицательная сумма.");
         final BigDecimal oldValue = jdbcTemplate.queryForObject(SELECT_QUERY, new Object[]{userId}, BigDecimal.class);
         final BigDecimal newValue = oldValue.subtract(value);
-        if(newValue.compareTo(new BigDecimal(0.)) < 0) throw new IllegalStateException("Отрицательный баланс.");
+        if(newValue.compareTo(new BigDecimal(0.)) < 0) throw new NotEnoughMoneyException("Отрицательный баланс.");
         jdbcTemplate.update(UPDATE_QUERY, newValue, userId);
     }
 

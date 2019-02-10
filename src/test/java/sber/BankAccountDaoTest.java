@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import sber.dao.BankAccountDao;
+import sber.exceptions.NotEnoughMoneyException;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -33,11 +34,11 @@ public class BankAccountDaoTest {
      * Положить деньги.
      */
     @Test
-    public void testDao1() {
-        bankAccountDao.putMoney(0, new BigDecimal(100));
+    public void testTopUp() {
+        bankAccountDao.topUp(0, new BigDecimal(100));
         final BigDecimal result1 = jdbcTemplate.queryForObject("SELECT value FROM bank_account WHERE person_id = 0", BigDecimal.class);
         Assert.assertEquals(new BigDecimal(100), result1);
-        bankAccountDao.putMoney(0, new BigDecimal(0.5));
+        bankAccountDao.topUp(0, new BigDecimal(0.5));
         final BigDecimal result2 = jdbcTemplate.queryForObject("SELECT value FROM bank_account WHERE person_id = 0", BigDecimal.class);
         Assert.assertEquals(new BigDecimal(100.5), result2);
     }
@@ -46,9 +47,9 @@ public class BankAccountDaoTest {
      * Снять деньги.
      */
     @Test
-    public void testDao2() {
+    public void testWithdraw() throws NotEnoughMoneyException {
         jdbcTemplate.update("update bank_account set value = ? where person_id = ?", 100, 0);
-        bankAccountDao.takeMoney(0, new BigDecimal(50));
+        bankAccountDao.withdraw(0, new BigDecimal(50));
         final BigDecimal result1 = jdbcTemplate.queryForObject("SELECT value FROM bank_account WHERE person_id = 0", BigDecimal.class);
         Assert.assertEquals(new BigDecimal(50), result1);
     }
@@ -56,11 +57,11 @@ public class BankAccountDaoTest {
     /**
      * Снять деньги. не хватает средств.
      */
-    @Test(expected = IllegalStateException.class)
-    public void testDao3() {
+    @Test(expected = NotEnoughMoneyException.class)
+    public void testWithdrawNotEnoughMoney() throws NotEnoughMoneyException {
         try {
             jdbcTemplate.update("update bank_account set value = ? where person_id = ?", 100, 0);
-            bankAccountDao.takeMoney(0, new BigDecimal(1000));
+            bankAccountDao.withdraw(0, new BigDecimal(1000));
         } catch (Exception e) {
             final BigDecimal result = jdbcTemplate.queryForObject("SELECT value FROM bank_account WHERE person_id = 0", BigDecimal.class);
             Assert.assertEquals(new BigDecimal(100), result);
@@ -72,9 +73,9 @@ public class BankAccountDaoTest {
      * Отрицательная сумма.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testDao11() {
+    public void testTopUpBadParam() {
         try {
-            bankAccountDao.putMoney(0, new BigDecimal(-10));
+            bankAccountDao.topUp(0, new BigDecimal(-10));
         } catch (Exception e) {
             final BigDecimal result = jdbcTemplate.queryForObject("SELECT value FROM bank_account WHERE person_id = 0", BigDecimal.class);
             Assert.assertEquals(new BigDecimal(0), result);
@@ -86,9 +87,9 @@ public class BankAccountDaoTest {
      * Отрицательная сумма.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testDao12() {
+    public void testWithdrawBadParam() throws NotEnoughMoneyException {
         try {
-            bankAccountDao.takeMoney(0, new BigDecimal(-10));
+            bankAccountDao.withdraw(0, new BigDecimal(-10));
         } catch (Exception e) {
             final BigDecimal result = jdbcTemplate.queryForObject("SELECT value FROM bank_account WHERE person_id = 0", BigDecimal.class);
             Assert.assertEquals(new BigDecimal(0), result);
@@ -100,9 +101,9 @@ public class BankAccountDaoTest {
      * Не существующий юзер
      */
     @Test(expected = Exception.class)
-    public void testDao13() {
+    public void testTopUpUserNotExist() {
         try {
-            bankAccountDao.putMoney(12345, new BigDecimal(10));
+            bankAccountDao.topUp(12345, new BigDecimal(10));
         } catch (Exception e) {
             final BigDecimal result = jdbcTemplate.queryForObject("SELECT value FROM bank_account WHERE person_id = 0", BigDecimal.class);
             Assert.assertEquals(new BigDecimal(0), result);
@@ -114,9 +115,9 @@ public class BankAccountDaoTest {
      * Не существующий юзер
      */
     @Test(expected = Exception.class)
-    public void testDao14() {
+    public void testWithdrawUserNotExist() {
         try {
-            bankAccountDao.putMoney(12345, new BigDecimal(10));
+            bankAccountDao.topUp(12345, new BigDecimal(10));
         } catch (Exception e) {
             final BigDecimal result = jdbcTemplate.queryForObject("SELECT value FROM bank_account WHERE person_id = 0", BigDecimal.class);
             Assert.assertEquals(new BigDecimal(0), result);

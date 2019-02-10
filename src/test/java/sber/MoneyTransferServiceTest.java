@@ -8,6 +8,7 @@ import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import sber.dao.BankAccountDao;
 import sber.dao.BankAccountOperationDao;
+import sber.exceptions.NotEnoughMoneyException;
 import sber.service.impl.MoneyTransferServiceImpl;
 
 import java.math.BigDecimal;
@@ -33,38 +34,38 @@ public class MoneyTransferServiceTest {
      * при возникновении ошибки транзакции денег смотрим, что вызывается запись ошибки в лог и выбрасывается exception
      */
     @Test
-    public void test1(){
+    public void testWithdrawMoneyError() throws NotEnoughMoneyException {
         //Бросаем ошибку
-        doThrow(IllegalStateException.class).when(bankAccountDao).takeMoney(any(Long.class), any(BigDecimal.class));
+        doThrow(IllegalStateException.class).when(bankAccountDao).withdraw(any(Long.class), any(BigDecimal.class));
         try {
-            moneyTransferService.takeMoney(1, new BigDecimal(100.));
+            moneyTransferService.withdraw(1, new BigDecimal(100.));
             Assert.fail();
         } catch (Exception e) {
             //Проверяем, что ошибка перебрасывается
             Assert.assertEquals(IllegalStateException.class, e.getClass());
         }
 
-        Mockito.verify(bankAccountDao, times(1)).takeMoney(any(Long.class), any(BigDecimal.class));
+        Mockito.verify(bankAccountDao, times(1)).withdraw(any(Long.class), any(BigDecimal.class));
         Mockito.verify(bankAccountOperationDao, times(0)).logSuccess(any(Long.class), any(Integer.class), any(BigDecimal.class));
         Mockito.verify(bankAccountOperationDao, times(1)).logError(any(Long.class), any(Integer.class), any(BigDecimal.class));
     }
 
     /**
-     * аналогично test1 только для putMoney
+     * аналогично test1 только для topUp
      */
     @Test
-    public void test2(){
+    public void testTopUpMoneyError(){
         //Бросаем ошибку
-        doThrow(IllegalStateException.class).when(bankAccountDao).putMoney(any(Long.class), any(BigDecimal.class));
+        doThrow(IllegalStateException.class).when(bankAccountDao).topUp(any(Long.class), any(BigDecimal.class));
         try {
-            moneyTransferService.putMoney(1, new BigDecimal(100.));
+            moneyTransferService.topUp(1, new BigDecimal(100.));
             Assert.fail();
         } catch (Exception e) {
             //Проверяем, что ошибка перебрасывается
             Assert.assertEquals(IllegalStateException.class, e.getClass());
         }
 
-        Mockito.verify(bankAccountDao, times(1)).putMoney(any(Long.class), any(BigDecimal.class));
+        Mockito.verify(bankAccountDao, times(1)).topUp(any(Long.class), any(BigDecimal.class));
         Mockito.verify(bankAccountOperationDao, times(0)).logSuccess(any(Long.class), any(Integer.class), any(BigDecimal.class));
         Mockito.verify(bankAccountOperationDao, times(1)).logError(any(Long.class), any(Integer.class), any(BigDecimal.class));
     }
@@ -74,10 +75,10 @@ public class MoneyTransferServiceTest {
      * при успешной транзакции вызывается запись в лог
      */
     @Test
-    public void test3(){
+    public void testLogCall(){
         //Бросаем ошибку
-        moneyTransferService.putMoney(1, new BigDecimal(100.));
-        Mockito.verify(bankAccountDao, times(1)).putMoney(any(Long.class), any(BigDecimal.class));
+        moneyTransferService.topUp(1, new BigDecimal(100.));
+        Mockito.verify(bankAccountDao, times(1)).topUp(any(Long.class), any(BigDecimal.class));
         Mockito.verify(bankAccountOperationDao, times(1)).logSuccess(any(Long.class), any(Integer.class), any(BigDecimal.class));
         Mockito.verify(bankAccountOperationDao, times(0)).logError(any(Long.class), any(Integer.class), any(BigDecimal.class));
     }
