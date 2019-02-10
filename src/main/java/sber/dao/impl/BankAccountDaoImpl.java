@@ -23,7 +23,7 @@ public class BankAccountDaoImpl implements BankAccountDao {
 
 
     /**
-     * Явно прописываем писсимистичную блокировку REPEATABLE_READ
+     * Явно прописываем уровень изолированности REPEATABLE_READ
      * По умолчанию checked Exceptions не закрывают транзакцию, поэтому прописываем rollbackFor
      */
     @Override

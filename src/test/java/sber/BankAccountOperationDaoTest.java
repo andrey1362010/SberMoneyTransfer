@@ -36,7 +36,7 @@ public class BankAccountOperationDaoTest {
         final List<OperationRow> operationRows = jdbcTemplate.query("SELECT * FROM bank_account_operations", new OperationRowMapper());
         Assert.assertEquals(1, operationRows.size());
         Assert.assertEquals(1, operationRows.get(0).userId);
-        Assert.assertEquals(false, operationRows.get(0).success);
+        Assert.assertEquals(0, operationRows.get(0).success);
         Assert.assertEquals(1, operationRows.get(0).operationType);
         Assert.assertEquals(new BigDecimal(100), operationRows.get(0).value);
     }
@@ -47,7 +47,7 @@ public class BankAccountOperationDaoTest {
         final List<OperationRow> operationRows = jdbcTemplate.query("SELECT * FROM bank_account_operations", new OperationRowMapper());
         Assert.assertEquals(1, operationRows.size());
         Assert.assertEquals(1, operationRows.get(0).userId);
-        Assert.assertEquals(true, operationRows.get(0).success);
+        Assert.assertEquals(1, operationRows.get(0).success);
         Assert.assertEquals(1, operationRows.get(0).operationType);
         Assert.assertEquals(new BigDecimal(100), operationRows.get(0).value);
     }
@@ -56,7 +56,7 @@ public class BankAccountOperationDaoTest {
         @Override
         public OperationRow mapRow(ResultSet resultSet, int i) throws SQLException {
             return new OperationRow(
-                    resultSet.getBoolean("operation_success"),
+                    resultSet.getInt("operation_state"),
                     resultSet.getLong("person_id"),
                     resultSet.getInt("operation_type"),
                     resultSet.getBigDecimal("operation_value")
@@ -65,12 +65,12 @@ public class BankAccountOperationDaoTest {
     }
 
     private static class OperationRow {
-        public final boolean success;
+        public final int success;
         public final long userId;
         public final int operationType;
         public final BigDecimal value;
 
-        OperationRow(boolean success, long userId, int operationType, BigDecimal value) {
+        OperationRow(int success, long userId, int operationType, BigDecimal value) {
             this.success = success;
             this.userId = userId;
             this.operationType = operationType;

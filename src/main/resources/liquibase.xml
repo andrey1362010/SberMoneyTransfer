@@ -29,7 +29,7 @@
             <column name="operation_value" type="decimal">
                 <constraints nullable="false"/>
             </column>
-            <column name="operation_success" type="boolean">
+            <column name="operation_state" type="smallint">
                 <constraints nullable="false"/>
             </column>
         </createTable>

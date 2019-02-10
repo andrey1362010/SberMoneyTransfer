@@ -33,7 +33,7 @@ public class MultiThreadConsistencyTest {
 
     /**
      * Многопоточный тест на консистентность БД.
-     * Используем HSQL базу, так как Н2 не поддерживает писсимистик лок REPEATABLE_READ
+     * Используем HSQL базу, так как Н2 не поддерживает уровени изолированности REPEATABLE_READ
      */
     @Test
     public void test1() {
@@ -68,8 +68,8 @@ public class MultiThreadConsistencyTest {
         });
 
 
-        final int errorCount = jdbcTemplate.queryForObject("SELECT count(*) FROM bank_account_operations WHERE operation_success = false", Integer.class);
-        final int successCount = jdbcTemplate.queryForObject("SELECT count(*) FROM bank_account_operations WHERE operation_success = true", Integer.class);
+        final int errorCount = jdbcTemplate.queryForObject("SELECT count(*) FROM bank_account_operations WHERE operation_state = 0", Integer.class);
+        final int successCount = jdbcTemplate.queryForObject("SELECT count(*) FROM bank_account_operations WHERE operation_state = 1", Integer.class);
         final BigDecimal result = jdbcTemplate.queryForObject("SELECT value FROM bank_account WHERE person_id = 1", BigDecimal.class);
         Assert.assertEquals(totalSuccess.get(), successCount);
         Assert.assertEquals(totalError.get(), errorCount);
