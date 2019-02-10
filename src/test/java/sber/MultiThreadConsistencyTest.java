@@ -38,8 +38,8 @@ public class MultiThreadConsistencyTest {
     @Test
     public void test1() {
 
-        final int threadCount = 10;
-        final int operationsCount = 50;
+        final int threadCount = 4;
+        final int operationsCount = 100;
         final AtomicReference<BigDecimal> total = new AtomicReference<>();
         final AtomicInteger totalSuccess = new AtomicInteger();
         final AtomicInteger totalError = new AtomicInteger();

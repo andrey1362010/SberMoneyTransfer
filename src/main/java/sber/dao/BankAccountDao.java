@@ -1,4 +1,4 @@
-package sber.dao.impl;
+package sber.dao;
 import java.math.BigDecimal;
 
 public interface BankAccountDao {

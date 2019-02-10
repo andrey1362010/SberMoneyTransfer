@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.junit4.SpringRunner;
-import sber.dao.impl.BankAccountOperationDao;
+import sber.dao.BankAccountOperationDao;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;

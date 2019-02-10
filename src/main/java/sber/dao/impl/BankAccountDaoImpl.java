@@ -1,4 +1,4 @@
-package sber.dao;
+package sber.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import sber.dao.impl.BankAccountDao;
+import sber.dao.BankAccountDao;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;

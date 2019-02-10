@@ -6,8 +6,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
-import sber.dao.impl.BankAccountDao;
-import sber.dao.impl.BankAccountOperationDao;
+import sber.dao.BankAccountDao;
+import sber.dao.BankAccountOperationDao;
 import sber.service.impl.MoneyTransferServiceImpl;
 
 import java.math.BigDecimal;

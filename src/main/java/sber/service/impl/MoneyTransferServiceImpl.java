@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sber.dao.impl.BankAccountDao;
-import sber.dao.impl.BankAccountOperationDao;
+import sber.dao.BankAccountDao;
+import sber.dao.BankAccountOperationDao;
 import sber.service.MoneyTransferService;
 
 import java.math.BigDecimal;

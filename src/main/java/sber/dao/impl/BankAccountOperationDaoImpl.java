@@ -1,10 +1,10 @@
-package sber.dao;
+package sber.dao.impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import sber.dao.impl.BankAccountOperationDao;
+import sber.dao.BankAccountOperationDao;
 
 import java.math.BigDecimal;
 
