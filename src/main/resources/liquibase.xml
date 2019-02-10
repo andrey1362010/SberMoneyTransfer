@@ -1,0 +1,47 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Andrey" id="1">
+        <createTable tableName="bank_account">
+            <column name="person_id" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="value" type="decimal">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="bank_account_operations">
+            <column autoIncrement="true" name="operation_id" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="person_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_type" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_value" type="decimal">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_success" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <insert tableName="bank_account">
+            <column name="person_id" value="0"/>
+            <column name="value" value ="0"/>
+        </insert>
+        <insert tableName="bank_account">
+            <column name="person_id" value="1"/>
+            <column name="value" value ="0"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
