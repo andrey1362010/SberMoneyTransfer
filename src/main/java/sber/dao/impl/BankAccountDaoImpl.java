@@ -21,12 +21,6 @@ public class BankAccountDaoImpl implements BankAccountDao {
     @Autowired
     private  JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private DataSource dataSource;
-
-    @Autowired
-    private DataSourceTransactionManager transactionManager;
-
 
     /**
      * Явно прописываем писсимистичную блокировку REPEATABLE_READ
