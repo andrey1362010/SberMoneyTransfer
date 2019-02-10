@@ -20,7 +20,6 @@ public class BankController {
         this.moneyTransferService = moneyTransferService;
     }
 
-    //todo передавать параметры в body
     @RequestMapping(value = "/topUp", method = RequestMethod.POST)
     public @ResponseBody String putMoney(@RequestParam long id, @RequestParam BigDecimal value, HttpServletResponse response) {
         try {
@@ -32,8 +31,7 @@ public class BankController {
             return errorJson().toString();
         }
     }
-
-    //todo передавать параметры в body
+    
     @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
     public @ResponseBody String takeMoney(@RequestParam long id, @RequestParam BigDecimal value, HttpServletResponse response) {
         try {
